@@ -3,8 +3,6 @@ from flask import jsonify
 import json
 from flask_cors import CORS
 
-from db_control import crud, mymodels
-
 import requests
 
 # Azure Database for MySQL
