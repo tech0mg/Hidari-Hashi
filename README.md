@@ -11,7 +11,7 @@
 - deactivate
 
 ■ frontend
-- npx create-next-app@12 nextjs-flask-app
+- npx create-next-app@12 frontend
 - cd frontend
 - npm install
 - npm run dev
