@@ -1,12 +1,13 @@
 "use client";
-import { useSearchParams } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const ListDetail = () => {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const image = searchParams.get("image");
 
   const handleBookmark = () => {
-    alert("しおりをみるボタンが押されました");
+    router.push("/customers/shiori/page1");
   };
 
   const handleMore = () => {
@@ -24,12 +25,20 @@ const ListDetail = () => {
       <h1 className="text-2xl font-bold mb-4 text-center">Image Detail</h1>
       {image ? (
         <div className="flex flex-col items-center">
-          <div className="mb-4">
-            <img
-              src={`http://127.0.0.1:5000${image}`}
-              alt="Selected Image"
-              className="rounded-lg shadow-lg max-w-full"
-            />
+          {/* 親コンテナ */}
+          <div className="mb-4 w-full max-w-xl">
+          <div className="relative w-full" style={{ aspectRatio: "16 / 9" , maxWidth: "500px", margin: "0 auto" }}>
+              <img
+                src={`http://127.0.0.1:5000${image}`}
+                alt="Selected Image"
+                className="absolute inset-0 w-full h-full object-contain rounded-lg shadow-lg"
+                style={{
+                  maxWidth: "100%",
+                  maxHeight: "100%",
+                  margin: "auto",
+                }}    
+              />
+            </div>
           </div>
           <div className="flex space-x-4 mt-4">
             <button

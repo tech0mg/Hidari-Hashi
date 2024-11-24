@@ -1,6 +1,15 @@
+"use client";
+
 import React from 'react';
+import { useRouter } from 'next/navigation';
 
 const App = () => {
+  const router = useRouter();
+
+  const goToList = () => {
+    router.push('/customers/list'); // リストページに遷移
+  };
+
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white">
       {/* ヘッダー */}
@@ -58,7 +67,7 @@ const App = () => {
             </div>
             <span className="text-sm mt-2">いきたい</span>
           </button>
-          <button className="flex flex-col items-center">
+          <button className="flex flex-col items-center"onClick={goToList}>
             <div className="w-10 h-10 bg-yellow-200 rounded-full flex items-center justify-center">
               ⭐
             </div>
