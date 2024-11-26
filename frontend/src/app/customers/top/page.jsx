@@ -1,7 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import './MobileApp.module.css';
 
 const App = () => {
   const router = useRouter();
@@ -38,6 +37,9 @@ const App = () => {
 
       {/* メインコンテンツ */}
       <main className="flex-grow p-4">
+        <div class="bg-blue-500 text-white p-4 rounded">
+          Tailwindが正常に動いています！
+        </div>
         <div className="hidden md:flex flex-wrap gap-4 justify-center">
           {images.map((src, index) => (
             <div key={index} className="w-1/4 p-2">
@@ -88,5 +90,7 @@ const App = () => {
     </div>
   );
 };
+
+
 
 export default App;
