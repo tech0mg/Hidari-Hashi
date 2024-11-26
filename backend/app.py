@@ -15,6 +15,7 @@ CORS(app)
 def index():
     return "<p>Flask top page!</p>"
 
+# リスト画像一覧を取得するエンドポイント
 @app.route('/api/images', methods=['GET'])
 def get_images():
     images_dir = os.path.join(app.static_folder, "images")
@@ -22,9 +23,31 @@ def get_images():
     image_urls = [f"/static/images/{img}" for img in image_files]
     return jsonify({"images": image_urls})
 
+
+# しおりのイラスト一覧を取得するエンドポイント
+@app.route('/api/illustrations', methods=['GET'])
+def get_illustrations():
+    illustrations_dir = os.path.join(app.static_folder, "illustrations")  # イラスト用のディレクトリ
+    if not os.path.exists(illustrations_dir):
+        return jsonify({"illustrations": []})  # ディレクトリが存在しない場合は空リストを返す
+
+    illustration_files = os.listdir(illustrations_dir)
+    illustrations = [
+        {"name": os.path.splitext(file)[0], "url": f"/static/illustrations/{file}"}
+        for file in illustration_files
+    ]
+    return jsonify({"illustrations": illustrations})
+
+# リスト画像ファイルを提供するエンドポイント
 @app.route('/static/images/<path:filename>')
 def serve_image(filename):
     return send_from_directory(os.path.join(app.static_folder, "images"), filename)
+
+
+# しおりのイラストファイルを提供するエンドポイント
+@app.route('/static/illustrations/<path:filename>')
+def serve_illustration(filename):
+    return send_from_directory(os.path.join(app.static_folder, "illustrations"), filename)
 
 
 if __name__ == "__main__":
