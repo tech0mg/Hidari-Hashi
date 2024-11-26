@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
+
 const ImageGrid = () => {
   const [images, setImages] = useState([]);
   const router = useRouter();
@@ -25,7 +26,7 @@ const ImageGrid = () => {
   };
 
 
- return (
+  return (
     <div className="p-4">
       <h1 className="text-2xl font-bold mb-4 text-center">Image Gallery</h1>
       <div className="image-grid grid grid-cols-3 gap-4">

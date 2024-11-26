@@ -1,14 +1,26 @@
 "use client";
-
-import React from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 const App = () => {
   const router = useRouter();
+  const [images, setImages] = useState([]);
 
   const goToList = () => {
     router.push('/customers/list'); // リストページに遷移
   };
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:5000/api/images")
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((data) => setImages(data.images))
+      .catch((error) => console.error("Error fetching images:", error));
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-white">
@@ -32,14 +44,24 @@ const App = () => {
           </button>
           
           {/* メインイメージ */}
-          <div className="mx-4">
+          <div className="image-grid grid grid-cols-3 gap-4">
+        {images.map((src, index) => (
+          <div 
+            key={index} 
+            className="image-card relative group overflow-hidden rounded-lg shadow-lg"
+            onClick={() => handleClick(src)} // 画面遷移を実行
+          >
             <img
-              src="https://via.placeholder.com/300x200" // 仮の画像URL
-              alt="Main content"
-              className="rounded-lg shadow-lg"
+              src={`http://127.0.0.1:5000${src}`}
+              alt={`Image ${index + 1}`}
+              className="w-full h-full object-cover transition-transform transform hover:scale-105"
             />
-            <p className="text-center mt-2">イースターエッグづくり体験</p>
+            <div className="like-button absolute top-2 right-2 bg-white p-2 rounded-full shadow-md">
+              <button className="text-pink-500 hover:text-pink-700">♥</button>
+            </div>
           </div>
+        ))}
+      </div>
 
           {/* 進むボタン */}
           <button className="p-2 bg-gray-100 rounded-full shadow-md">
