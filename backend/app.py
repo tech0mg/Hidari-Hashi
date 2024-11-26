@@ -9,7 +9,7 @@ import requests
 # REST APIでありCRUDを持っている
 app = Flask(__name__, static_folder='static')
 CORS(app)
- 
+
 
 @app.route("/")
 def index():

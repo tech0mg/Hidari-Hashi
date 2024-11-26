@@ -1,0 +1,133 @@
+/* ベーススタイル */
+.mobile-app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+  /* ヘッダー */
+.header {
+    background-color: #ffffff;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+}
+
+.header-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.header-options button {
+    font-size: 0.9rem;
+    margin: 5px;
+    padding: 8px 12px;
+    border: none;
+    background-color: #eee;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.header-options button:hover {
+    background-color: #ccc;
+}
+
+  /* メインコンテンツ */
+.content {
+    flex: 1;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.image-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.main-image {
+    max-width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.image-description {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #333;
+}
+
+  /* ボタンコントロール */
+.image-controls {
+    display: flex;
+    justify-content: space-between;
+    width: 80%;
+    margin-top: 15px;
+}
+
+.button {
+    flex: 1;
+    margin: 0 10px;
+    padding: 12px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+}
+
+.button.dislike {
+    background-color: #d1ecf1;
+    color: #0c5460;
+}
+
+.button.like {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+  /* フッター */
+.footer {
+    background-color: #ffffff;
+    border-top: 1px solid #ddd;
+    padding: 10px;
+    display: flex;
+    justify-content: space-around;
+}
+
+.footer-button {
+    flex: 1;
+    margin: 0 5px;
+    padding: 8px;
+    font-size: 0.8rem;
+    border: none;
+    background-color: #eee;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.footer-button:hover {
+    background-color: #ccc;
+}
+
+  /* スマホ専用スタイル */
+@media (max-width: 768px) {
+    .header-title {
+        font-size: 1.2rem;
+    }
+
+    .image-controls .button {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+    .footer-button {
+        font-size: 0.75rem;
+        padding: 6px;
+    }
+}

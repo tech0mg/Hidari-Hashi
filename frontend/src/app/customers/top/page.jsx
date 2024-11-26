@@ -1,14 +1,11 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import './MobileApp.module.css';
 
 const App = () => {
   const router = useRouter();
   const [images, setImages] = useState([]);
-
-  const goToList = () => {
-    router.push('/customers/list'); // リストページに遷移
-  };
 
   useEffect(() => {
     fetch("http://127.0.0.1:5000/api/images")
@@ -22,81 +19,72 @@ const App = () => {
       .catch((error) => console.error("Error fetching images:", error));
   }, []);
 
+  const goToList = () => {
+    router.push('/customers/list'); // リストページに遷移
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center h-screen bg-white">
+    <div className="flex flex-col h-screen bg-gray-100">
       {/* ヘッダー */}
-      <header className="w-full flex justify-between items-center p-4">
-        <div className="flex items-center">
-          <span className="text-xl font-bold">Sample★Sample★Sample★</span>
-        </div>
-        <div>
-          <button className="text-gray-500">MENU</button>
-        </div>
+      <header className="bg-white shadow-md p-4 flex justify-between items-center">
+        <h1 className="text-xl font-bold">Web & Mobile App</h1>
+        <button
+          className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          onClick={goToList}
+        >
+          Go to List
+        </button>
       </header>
 
-      {/* コンテンツ */}
-      <main className="flex flex-col items-center justify-center flex-grow">
-        {/* ナビゲーションとメインイメージ */}
-        <div className="flex items-center">
-          {/* 戻るボタン */}
-          <button className="p-2 bg-gray-100 rounded-full shadow-md">
-            <span className="text-purple-500">←</span>
-          </button>
-          
-          {/* メインイメージ */}
-          <div className="image-grid grid grid-cols-3 gap-4">
-        {images.map((src, index) => (
-          <div 
-            key={index} 
-            className="image-card relative group overflow-hidden rounded-lg shadow-lg"
-            onClick={() => handleClick(src)} // 画面遷移を実行
-          >
-            <img
-              src={`http://127.0.0.1:5000${src}`}
-              alt={`Image ${index + 1}`}
-              className="w-full h-full object-cover transition-transform transform hover:scale-105"
-            />
-            <div className="like-button absolute top-2 right-2 bg-white p-2 rounded-full shadow-md">
-              <button className="text-pink-500 hover:text-pink-700">♥</button>
+      {/* メインコンテンツ */}
+      <main className="flex-grow p-4">
+        <div className="hidden md:flex flex-wrap gap-4 justify-center">
+          {images.map((src, index) => (
+            <div key={index} className="w-1/4 p-2">
+              <img
+                src={`http://127.0.0.1:5000${src}`}
+                alt={`Image ${index + 1}`}
+                className="w-full h-full object-cover rounded-lg shadow-md"
+              />
             </div>
-          </div>
-        ))}
-      </div>
-
-          {/* 進むボタン */}
-          <button className="p-2 bg-gray-100 rounded-full shadow-md">
-            <span className="text-purple-500">→</span>
-          </button>
+          ))}
         </div>
-
-        {/* ボトムボタン */}
-        <div className="mt-8 grid grid-cols-4 gap-4">
-          <button className="flex flex-col items-center">
-            <div className="w-10 h-10 bg-green-200 rounded-full flex items-center justify-center">
-              📖
+        <div className="block md:hidden">
+          {images.map((src, index) => (
+            <div key={index} className="mb-4">
+              <img
+                src={`http://127.0.0.1:5000${src}`}
+                alt={`Image ${index + 1}`}
+                className="w-full h-64 object-cover rounded-lg shadow-md"
+              />
+              <div className="flex justify-around mt-2">
+                <button className="px-4 py-2 bg-red-500 text-white rounded-full shadow-md hover:bg-red-600">
+                  Dislike
+                </button>
+                <button className="px-4 py-2 bg-green-500 text-white rounded-full shadow-md hover:bg-green-600">
+                  Like
+                </button>
+              </div>
             </div>
-            <span className="text-sm mt-2">しおりを作る</span>
-          </button>
-          <button className="flex flex-col items-center">
-            <div className="w-10 h-10 bg-red-200 rounded-full flex items-center justify-center">
-              ❌
-            </div>
-            <span className="text-sm mt-2">いかない</span>
-          </button>
-          <button className="flex flex-col items-center">
-            <div className="w-10 h-10 bg-pink-200 rounded-full flex items-center justify-center">
-              ❤️
-            </div>
-            <span className="text-sm mt-2">いきたい</span>
-          </button>
-          <button className="flex flex-col items-center"onClick={goToList}>
-            <div className="w-10 h-10 bg-yellow-200 rounded-full flex items-center justify-center">
-              ⭐
-            </div>
-            <span className="text-sm mt-2">リストを見る</span>
-          </button>
+          ))}
         </div>
       </main>
+
+      {/* フッター */}
+      <footer className="bg-white shadow-inner p-4 flex justify-around">
+        <button className="text-center">
+          <span className="block text-lg">📖</span>
+          <span className="text-sm">Create Bookmark</span>
+        </button>
+        <button className="text-center">
+          <span className="block text-lg">⭐</span>
+          <span className="text-sm">View List</span>
+        </button>
+        <button className="text-center">
+          <span className="block text-lg">📂</span>
+          <span className="text-sm">View Records</span>
+        </button>
+      </footer>
     </div>
   );
 };
