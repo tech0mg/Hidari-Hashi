@@ -38,7 +38,7 @@ const ImageGrid = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4 text-center">Image Gallery</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">いきたいリスト</h1>
       <div className="image-grid grid grid-cols-3 gap-4">
         {images.map((src, index) => (
           <div 
