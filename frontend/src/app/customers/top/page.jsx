@@ -37,9 +37,9 @@ const App = () => {
 
       {/* メインコンテンツ */}
       <main className="flex-grow p-4">
-        <div class="bg-blue-500 text-white p-4 rounded">
+        {/* <div className="bg-blue-500 text-white p-4 rounded">
           Tailwindが正常に動いています！
-        </div>
+        </div> */}
         <div className="hidden md:flex flex-wrap gap-4 justify-center">
           {images.map((src, index) => (
             <div key={index} className="w-1/4 p-2">
@@ -80,11 +80,11 @@ const App = () => {
         </button>
         <button className="text-center">
           <span className="block text-lg">⭐</span>
-          <span className="text-sm">View List</span>
+          <span className="text-sm">リストをみる</span>
         </button>
         <button className="text-center">
           <span className="block text-lg">📂</span>
-          <span className="text-sm">View Records</span>
+          <span className="text-sm">きろくをみる</span>
         </button>
       </footer>
     </div>

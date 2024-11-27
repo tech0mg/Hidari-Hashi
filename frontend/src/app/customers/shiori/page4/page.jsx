@@ -11,6 +11,8 @@ const ShioriPage4 = () => {
   const handleNavigation = (destination) => {
     if (destination === "prev") {
       router.push("/customers/shiori/page3"); // 前のページへのリンク
+    } else if (destination === "next") {
+      router.push("/customers/shiori/page5");
     } else if (destination === "list-detail") {
       router.push("/customers/list/list-detail");
     } else if (destination === "list") {
@@ -69,6 +71,13 @@ const ShioriPage4 = () => {
           onClick={() => handleNavigation("prev")}
         >
           ←
+        </button>
+        {/* 次へボタン */}
+        <button
+          className="p-2 bg-gray-200 rounded-full shadow-md"
+          onClick={() => handleNavigation("next")}
+        >
+          →
         </button>
       </div>
 
