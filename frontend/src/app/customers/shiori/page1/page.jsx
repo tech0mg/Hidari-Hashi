@@ -11,10 +11,11 @@ const ShioriPage = () => {
   const [isColorModalOpen, setIsColorModalOpen] = useState(false); // モーダル状態
   const { shioriColor, setColor } = useColor(); // Contextから色を取得
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     // イラストのリストを取得
-    fetch("http://127.0.0.1:5000/api/illustrations")
+    fetch(`${apiUrl}/api/illustrations`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch illustrations.");
@@ -83,7 +84,7 @@ const ShioriPage = () => {
           {selectedIllustration && (
             <div className="mt-4">
               <img
-                src={`http://127.0.0.1:5000${selectedIllustration}`}
+                src={`${apiUrl}${selectedIllustration}`}
                 alt="Selected Illustration"
                 className="w-32 h-32 object-contain mx-auto border border-gray-300 rounded-lg"
               />
