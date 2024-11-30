@@ -21,7 +21,7 @@ const ShioriPage3 = () => {
   };
 
   return (
-    <div className={`flex flex-col items-center justify-between min-h-screen ${shioriColor}`}>
+    <div id="page3" className={`flex flex-col items-center justify-between min-h-screen ${shioriColor}`}>
       {/* 上部コンテンツ */}
       <div className="flex flex-col items-center mt-8 w-full max-w-2xl">
         <div className="border-4 border-pink-500 rounded-md p-6 bg-white shadow-lg w-full">

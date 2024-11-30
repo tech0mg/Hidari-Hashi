@@ -92,7 +92,7 @@ const ShioriPage5 = () => {
   };    
 
   return (
-    <div className={`flex flex-col items-center justify-between min-h-screen ${shioriColor}`}>
+    <div id="page5" className={`flex flex-col items-center justify-between min-h-screen ${shioriColor}`}>
       <div className="flex flex-col items-center mt-8">
         <div className="border-4 border-pink-500 rounded-md p-6 bg-white shadow-lg w-full max-w-2xl">
           <h1 className="text-3xl font-bold mb-6 text-center">しおり Page 5</h1>
