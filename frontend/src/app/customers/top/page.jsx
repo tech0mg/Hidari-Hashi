@@ -26,7 +26,7 @@ const App = () => {
     <div className="flex flex-col h-screen bg-gray-100">
       {/* ヘッダー */}
       <header className="bg-white shadow-md p-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold">Web & Mobile App</h1>
+        <h1 className="text-xl font-bold">Kid's Compass</h1>
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           onClick={goToList}

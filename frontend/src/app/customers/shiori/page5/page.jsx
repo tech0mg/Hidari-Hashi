@@ -2,9 +2,11 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ShioriFooterButtons from "../components/ShioriFooterButtons";
+import { useColor } from "../../../context/ColorContext"; // ColorContextのインポート
 
 const ShioriPage5 = () => {
   const router = useRouter();
+  const { shioriColor } = useColor(); // Contextから色を取得
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
@@ -89,7 +91,7 @@ const ShioriPage5 = () => {
   };    
 
   return (
-    <div className="flex flex-col items-center justify-between min-h-screen bg-gray-100">
+    <div className={`flex flex-col items-center justify-between min-h-screen ${shioriColor}`}>
       <div className="flex flex-col items-center mt-8">
         <div className="border-4 border-pink-500 rounded-md p-6 bg-white shadow-lg w-full max-w-2xl">
           <h1 className="text-3xl font-bold mb-6 text-center">しおり Page 5</h1>
