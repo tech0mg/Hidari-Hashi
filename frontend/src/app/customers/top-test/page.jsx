@@ -9,9 +9,10 @@ import ImageSwiper from '../../components/ImageSwiper.jsx';
 const App = () => {
   const router = useRouter();
   const [images, setImages] = useState([]);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/images")
+    fetch(`${apiUrl}/api/images`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
