@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* メインコンテンツ用のグラデーション背景 */
+.bg-gradient-main {
+  background: linear-gradient(to bottom, #ECE9E6, #FFFFFF);
+}
+
+@layer base {
+  /* デフォルトテキスト色を#9A877Aに設定 */
+  body {
+    color: #9A877A;
+  }
+}
 
 /* グリッド全体のスタイル */
 .image-grid {

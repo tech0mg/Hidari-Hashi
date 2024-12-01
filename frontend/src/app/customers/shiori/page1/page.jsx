@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import ShioriFooterButtons from "../components/ShioriFooterButtons";//下部の共通ボタン
+import ShioriFooterButtons from "../components/ShioriFooterButtons"; // 下部の共通ボタン
 
 const ShioriPage = () => {
   const router = useRouter();
@@ -21,14 +21,13 @@ const ShioriPage = () => {
       .catch((error) => console.error(error));
   }, []);
 
-
   const handleNavigation = (destination) => {
     if (destination === "next") {
       router.push("/customers/shiori/page2");
     } else if (destination === "list-detail") {
       router.push("/customers/list/list-detail");
     } else if (destination === "list") {
-        router.push("/customers/list");
+      router.push("/customers/list");
     }
   };
 
@@ -36,9 +35,13 @@ const ShioriPage = () => {
     setSelectedIllustration(event.target.value);
   };
 
-
   return (
     <div className="flex flex-col items-center justify-between min-h-screen bg-gray-100">
+      {/* ヘッダー */}
+      <header className="bg-[#ECE9E6] shadow-md p-4 flex justify-between items-center w-full">
+        <h1 className="text-xl font-bold text-[#9A877A]">Kid's Compass</h1>
+      </header>
+
       {/* 上部コンテンツ */}
       <div className="flex flex-col items-center mt-8">
         <div className="border-4 border-pink-500 rounded-md p-6 bg-white shadow-lg">
@@ -48,7 +51,10 @@ const ShioriPage = () => {
 
           {/* イラスト選択プルダウン */}
           <div className="mt-4">
-            <label htmlFor="illustration-select" className="block mb-2 text-sm font-medium text-gray-700">
+            <label
+              htmlFor="illustration-select"
+              className="block mb-2 text-sm font-medium text-gray-700"
+            >
               イラストを選択してください
             </label>
             <select
@@ -78,9 +84,8 @@ const ShioriPage = () => {
         </div>
       </div>
 
-
-        {/* 次へボタン */}
-        <div className="mt-4">
+      {/* 次へボタン */}
+      <div className="mt-4">
         <button
           className="p-2 bg-gray-200 rounded-full shadow-md"
           onClick={() => handleNavigation("next")}
