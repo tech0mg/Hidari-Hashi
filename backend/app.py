@@ -4,11 +4,77 @@ import json
 from flask_cors import CORS
 import os
 import requests
+import mysql.connector
+from mysql.connector import Error
+
 
 # Azure Database for MySQL
 # REST APIでありCRUDを持っている
 app = Flask(__name__, static_folder='static')
 CORS(app)
+
+# MySQL接続設定
+app.config['MYSQL_HOST'] = 'localhost'
+app.config['MYSQL_USER'] = 'root'
+app.config['MYSQL_PASSWORD'] = 'Password123'
+app.config['MYSQL_DATABASE'] = 'sample_app'
+
+
+def get_db_connection():
+    try:
+        connection = mysql.connector.connect(
+            host=app.config['MYSQL_HOST'],
+            user=app.config['MYSQL_USER'],
+            password=app.config['MYSQL_PASSWORD'],
+            database=app.config['MYSQL_DATABASE']
+        )
+        return connection
+    except Error as e:
+        print(f"Error connecting to MySQL: {e}")
+        return None
+    
+@app.route('/test_db', methods=['GET'])
+def test_db():
+    connection = get_db_connection()
+    if connection:
+        connection.close()
+        return {"status": "success", "message": "Database connection successful"}, 200
+    else:
+        return {"status": "error", "message": "Database connection failed"}, 500
+    
+
+@app.route('/users', methods=['GET'])
+def get_users():
+    connection = get_db_connection()
+    if connection is None:
+        return jsonify({"error": "Database connection failed"}), 500
+    try:
+        cursor = connection.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM users")
+        users = cursor.fetchall()
+        return jsonify(users)
+    except mysql.connector.Error as e:
+        print(f"Error executing query: {e}")
+        return jsonify({"error": "Failed to fetch data"}), 500
+    finally:
+        cursor.close()
+        connection.close()
+
+
+@app.route('/add_user', methods=['POST'])
+def add_user():
+    data = request.json
+    name = data.get('name')
+    email = data.get('email')
+    connection = get_db_connection()
+    if connection is None:
+        return jsonify({"error": "Database connection failed"}), 500
+    cursor = connection.cursor()
+    cursor.execute("INSERT INTO users (name, email) VALUES (%s, %s)", (name, email))
+    connection.commit()
+    cursor.close()
+    connection.close()
+    return jsonify({"message": "User added successfully!"})
 
 
 @app.route("/")
