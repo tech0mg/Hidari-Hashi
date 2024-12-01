@@ -2,9 +2,12 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import ShioriFooterButtons from "../components/ShioriFooterButtons";
+import { useColor } from "../../../context/ColorContext"; // ColorContextのインポート
 
 const ShioriPage5 = () => {
   const router = useRouter();
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+  const { shioriColor } = useColor(); // Contextから色を取得
   const [selectedFile, setSelectedFile] = useState(null);
   const [previewUrl, setPreviewUrl] = useState(null);
   const [uploadedPhotos, setUploadedPhotos] = useState([]);
@@ -17,7 +20,7 @@ const ShioriPage5 = () => {
   useEffect(() => {
     const fetchPhotos = async () => {
       try {
-        const response = await fetch("http://127.0.0.1:5000/api/photos");
+        const response = await fetch(`${apiUrl}/api/photos`);
         if (!response.ok) {
           throw new Error("Failed to fetch photos");
         }
@@ -54,7 +57,7 @@ const ShioriPage5 = () => {
     formData.append("photo", selectedFile);
 
     try {
-        const response = await fetch("http://127.0.0.1:5000/api/upload-photo", {
+        const response = await fetch(`${apiUrl}/api/upload-photo`, {
           method: "POST",
           body: formData,
         });
@@ -89,7 +92,7 @@ const ShioriPage5 = () => {
   };    
 
   return (
-    <div className="flex flex-col items-center justify-between min-h-screen bg-gray-100">
+    <div id="page5" className={`flex flex-col items-center justify-between min-h-screen ${shioriColor}`}>
       <div className="flex flex-col items-center mt-8">
         <div className="border-4 border-pink-500 rounded-md p-6 bg-white shadow-lg w-full max-w-2xl">
           <h1 className="text-3xl font-bold mb-6 text-center">しおり Page 5</h1>
@@ -135,10 +138,10 @@ const ShioriPage5 = () => {
               {uploadedPhotos.map((photo, index) => (
                 <img
                   key={index}
-                  src={`http://127.0.0.1:5000${photo}`}
+                  src={`${apiUrl}${photo}`}
                   alt={`Uploaded ${index + 1}`}
                   className="w-32 h-32 object-cover rounded-lg shadow-md cursor-pointer"
-                  onClick={() => openModal(`http://127.0.0.1:5000${photo}`)} // クリック時にモーダルを開く
+                  onClick={() => openModal(`${apiUrl}${photo}`)} // クリック時にモーダルを開く
                 />
               ))}
             </div>

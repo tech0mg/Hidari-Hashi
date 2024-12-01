@@ -5,9 +5,10 @@ import { useRouter } from "next/navigation";
 const App = () => {
   const router = useRouter();
   const [images, setImages] = useState([]);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/images")
+    fetch(`${apiUrl}/api/images`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -26,7 +27,7 @@ const App = () => {
     <div className="flex flex-col h-screen bg-gray-100">
       {/* ヘッダー */}
       <header className="bg-white shadow-md p-4 flex justify-between items-center">
-        <h1 className="text-xl font-bold">Web & Mobile App</h1>
+        <h1 className="text-xl font-bold">Kid's Compass</h1>
         <button
           className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
           onClick={goToList}
@@ -44,7 +45,7 @@ const App = () => {
           {images.map((src, index) => (
             <div key={index} className="w-1/4 p-2">
               <img
-                src={`http://127.0.0.1:5000${src}`}
+                src={`${apiUrl}${src}`}
                 alt={`Image ${index + 1}`}
                 className="w-full h-full object-cover rounded-lg shadow-md"
               />
@@ -55,7 +56,7 @@ const App = () => {
           {images.map((src, index) => (
             <div key={index} className="mb-4">
               <img
-                src={`http://127.0.0.1:5000${src}`}
+                src={`${apiUrl}${src}`}
                 alt={`Image ${index + 1}`}
                 className="w-full h-64 object-cover rounded-lg shadow-md"
               />

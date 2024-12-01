@@ -2,9 +2,11 @@
 import React from "react";
 import { useRouter } from "next/navigation";
 import ShioriFooterButtons from "../components/ShioriFooterButtons"; // 下部の共通ボタン
+import { useColor } from "../../../context/ColorContext"; // ColorContextのインポート
 
 const ShioriPage2 = () => {
   const router = useRouter();
+  const { shioriColor } = useColor(); // Contextから色を取得
 
   const handleNavigation = (destination) => {
     if (destination === "next") {
@@ -19,7 +21,7 @@ const ShioriPage2 = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-between min-h-screen bg-gray-100">
+    <div id="page2" className={`flex flex-col items-center justify-between min-h-screen ${shioriColor}`}>
       {/* 上部コンテンツ */}
       <div className="flex flex-col items-center mt-8">
         <div className="border-4 border-pink-500 rounded-md p-6 bg-white shadow-lg w-full max-w-2xl">

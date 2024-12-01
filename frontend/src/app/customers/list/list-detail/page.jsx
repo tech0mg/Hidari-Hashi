@@ -6,6 +6,8 @@ const ListDetail = () => {
   const router = useRouter();
   const image = searchParams.get("image");
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
   const handleBookmark = () => {
     router.push("/customers/shiori/page1");
   };
@@ -29,7 +31,7 @@ const ListDetail = () => {
           <div className="mb-4 w-full max-w-xl">
           <div className="relative w-full" style={{ aspectRatio: "16 / 9" , maxWidth: "500px", margin: "0 auto" }}>
               <img
-                src={`http://127.0.0.1:5000${image}`}
+                src={`${apiUrl}${image}`}
                 alt="Selected Image"
                 className="absolute inset-0 w-full h-full object-contain rounded-lg shadow-lg"
                 style={{
