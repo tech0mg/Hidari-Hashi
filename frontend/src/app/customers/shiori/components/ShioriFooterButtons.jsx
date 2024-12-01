@@ -1,8 +1,11 @@
 "use client";
 import React from "react";
 import { useRouter } from "next/navigation";
+import SaveToPDF from "./SaveToPDF";
 
 const ShioriFooterButtons = ({ handleNavigation }) => {
+  const pagesToSave = ["page1", "page2", "page3", "page4", "page5"]; // PDF出力対象のページID
+  
   return (
     <div className="bg-white w-full shadow-lg p-4">
       <div className="grid grid-cols-3 gap-4 text-center">
@@ -24,15 +27,12 @@ const ShioriFooterButtons = ({ handleNavigation }) => {
           </div>
           <span className="text-sm mt-2">イラストをえらぶ</span>
         </button>
-        <button
-          onClick={() => alert("ほぞんするボタンが押されました")}
-          className="flex flex-col items-center"
-        >
-          <div className="w-12 h-12 bg-pink-200 rounded-full flex items-center justify-center">
-            💾
-          </div>
-          <span className="text-sm mt-2">ほぞんする</span>
-        </button>
+        
+        <SaveToPDF
+          pages={pagesToSave} // PDF出力対象のページを指定
+          fileName="ShioriContent.pdf" // 保存するPDFの名前
+        />
+        
         <button
           onClick={() => handleNavigation("list-detail")}
           className="flex flex-col items-center"

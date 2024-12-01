@@ -8,9 +8,10 @@ const ImageGrid = () => {
   const [likedImages, setLikedImages] = useState([]); // ハートが押された画像を記録
   const router = useRouter();
 
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
-    fetch("http://127.0.0.1:5000/api/images")
+    fetch(`${apiUrl}/api/images`)
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
@@ -38,7 +39,7 @@ const ImageGrid = () => {
 
   return (
     <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4 text-center">Image Gallery</h1>
+      <h1 className="text-2xl font-bold mb-4 text-center">いきたいリスト</h1>
       <div className="image-grid grid grid-cols-3 gap-4">
         {images.map((src, index) => (
           <div 
@@ -47,7 +48,7 @@ const ImageGrid = () => {
             onClick={() => handleClick(src)} // 画面遷移を実行
           >
             <img
-              src={`http://127.0.0.1:5000${src}`}
+              src={`${apiUrl}${src}`}
               alt={`Image ${index + 1}`}
               className="w-full h-full object-cover transition-transform transform hover:scale-105"
             />
