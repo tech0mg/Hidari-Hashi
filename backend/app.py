@@ -6,12 +6,12 @@ import os
 import requests
 import mysql.connector
 from mysql.connector import Error
-
+from dotenv import load_dotenv
 
 # Azure Database for MySQL
 # REST APIでありCRUDを持っている
 app = Flask(__name__, static_folder='static')
-CORS(app)
+CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # MySQL接続設定
 app.config['MYSQL_HOST'] = 'localhost'
@@ -115,6 +115,76 @@ def serve_image(filename):
 def serve_illustration(filename):
     return send_from_directory(os.path.join(app.static_folder, "illustrations"), filename)
 
+# しおりの天気を取得するために郵便番号を取得するエンドポイント
+@app.route('/api/postal-code', methods=['GET'])
+def get_postal_code():
+    address = request.args.get('address')
+
+    if not address:
+        return jsonify({"error": "住所が指定されていません"}), 400
+
+    try:
+        response = requests.get(
+            f"https://api.excelapi.org/post/zipcode", params={"address": address}
+        )
+        print("ExcelAPI Response:", response.text)  # デバッグログ
+
+        if response.status_code == 200:
+            postal_code = response.text.strip()
+            return jsonify({"postalCode": postal_code}), 200
+        else:
+            return jsonify({"error": "郵便番号が見つかりませんでした"}), 404
+    except Exception as e:
+        print(f"Error fetching postal code: {e}")
+        return jsonify({"error": "郵便番号取得中にエラーが発生しました"}), 500
+
+
+# 天気情報をOpenWeatherMapから取得してくる
+# 環境変数をロード
+load_dotenv()
+
+# OpenWeatherMap API キーを取得
+OPENWEATHERMAP_API_KEY = os.getenv("OPENWEATHERMAP_API_KEY")
+
+if not OPENWEATHERMAP_API_KEY:
+    raise ValueError("OPENWEATHERMAP_API_KEY が環境変数に設定されていません。")
+
+# 天気情報を取得するエンドポイント
+@app.route('/api/weather', methods=['GET'])
+def get_weather():
+    postal_code = request.args.get('postalCode')
+    country_code = request.args.get('countryCode', 'JP')  # デフォルトは日本の国コード
+
+    if not postal_code:
+        return jsonify({"error": "郵便番号が指定されていません"}), 400
+
+    # 郵便番号にハイフンを挿入する処理
+    if len(postal_code) == 7:  # 日本の郵便番号が7桁の場合
+        postal_code = f"{postal_code[:3]}-{postal_code[3:]}"  # 例: 1234567 -> 123-4567
+
+    try:
+        print(f"Requesting OpenWeatherMap API with postalCode: {postal_code}, countryCode: {country_code}")
+        # OpenWeatherMap API にリクエストを送信
+        response = requests.get(
+            "https://api.openweathermap.org/data/2.5/weather",
+            params={
+                "zip": f"{postal_code},{country_code}",
+                "appid": OPENWEATHERMAP_API_KEY,
+                "units": "metric",  # 摂氏で取得
+                "lang": "ja"  # 日本語で取得
+            }
+        )
+        if response.status_code == 200:
+            weather_data = response.json()
+            return jsonify(weather_data), 200
+        else:
+            print(f"Error response from OpenWeatherMap: {response.status_code}, {response.text}")
+            return jsonify({"error": "天気情報が取得できませんでした"}), response.status_code
+    except Exception as e:
+        print(f"Error fetching weather data: {e}")
+        return jsonify({"error": "天気情報取得中にエラーが発生しました"}), 500
+
+
 
 # 写真アップロードのエンドポイントを追加
 @app.route('/api/upload-photo', methods=['POST'])
@@ -153,4 +223,4 @@ def get_photos():
 
 if __name__ == "__main__":
         # ポートを 8080 に設定
-    app.run(host='127.0.0.1', port=8080)
+    app.run(host='127.0.0.1', port=5000)
