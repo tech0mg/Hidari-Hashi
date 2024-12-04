@@ -13,6 +13,13 @@ from dotenv import load_dotenv
 app = Flask(__name__, static_folder='static')
 CORS(app, resources={r"/api/*": {"origins": "*"}})
 
+# 環境変数をロード
+load_dotenv()
+
+# API キー
+OPENWEATHERMAP_API_KEY = os.getenv("OPENWEATHERMAP_API_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+
 # MySQL接続設定
 app.config['MYSQL_HOST'] = 'localhost'
 app.config['MYSQL_USER'] = 'root'
@@ -140,11 +147,7 @@ def get_postal_code():
 
 
 # 天気情報をOpenWeatherMapから取得してくる
-# 環境変数をロード
-load_dotenv()
 
-# OpenWeatherMap API キーを取得
-OPENWEATHERMAP_API_KEY = os.getenv("OPENWEATHERMAP_API_KEY")
 
 if not OPENWEATHERMAP_API_KEY:
     raise ValueError("OPENWEATHERMAP_API_KEY が環境変数に設定されていません。")
@@ -184,6 +187,54 @@ def get_weather():
         print(f"Error fetching weather data: {e}")
         return jsonify({"error": "天気情報取得中にエラーが発生しました"}), 500
 
+
+# 住所から緯度と経度を取得する
+@app.route('/api/route', methods=['GET'])
+def get_route():
+    start = request.args.get('start')
+    destination = request.args.get('destination')
+
+    if not start or not destination:
+        return jsonify({"error": "出発地と目的地を指定してください"}), 400
+
+    try:
+        # 出発地と目的地の緯度経度を取得
+        start_coords = get_lat_lng(start)
+        destination_coords = get_lat_lng(destination)
+
+        if not start_coords or not destination_coords:
+            return jsonify({"error": "住所から緯度経度を取得できませんでした"}), 400
+
+        # Roads APIで経路を取得
+        response = requests.get(
+            f"https://roads.googleapis.com/v1/nearestRoads",
+            params={
+                "points": f"{start_coords['lat']},{start_coords['lng']}|{destination_coords['lat']},{destination_coords['lng']}",
+                "key": GOOGLE_API_KEY
+            }
+        )
+
+        if response.status_code != 200:
+            return jsonify({"error": "経路情報の取得に失敗しました"}), response.status_code
+
+        return jsonify(response.json()), 200
+    except Exception as e:
+        print(f"Error fetching route: {e}")
+        return jsonify({"error": "経路情報取得中にエラーが発生しました"}), 500
+
+
+# 経路の表示
+def get_lat_lng(address):
+    response = requests.get(
+        "https://maps.googleapis.com/maps/api/geocode/json",
+        params={"address": address, "key": GOOGLE_API_KEY}
+    )
+    if response.status_code == 200:
+        data = response.json()
+        if "results" in data and len(data["results"]) > 0:
+            location = data["results"][0]["geometry"]["location"]
+            return {"lat": location["lat"], "lng": location["lng"]}
+    return None
 
 
 # 写真アップロードのエンドポイントを追加

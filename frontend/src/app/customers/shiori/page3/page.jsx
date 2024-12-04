@@ -7,8 +7,10 @@ import { useColor } from "../../../context/ColorContext"; // ColorContextのイ�
 const ShioriPage3 = () => {
   const router = useRouter();
   const { shioriColor } = useColor(); // Contextから色を取得
-  const [address, setAddress] = useState(""); // ユーザーが入力した住所
+  const [startAddress, setStartAddress] = useState(""); // 出発地
+  const [address, setAddress] = useState(""); // 目的地
   const [weatherData, setWeatherData] = useState(null); // 天気データの状態管理
+  const [routeData, setRouteData] = useState(null); // 経路データの状態管理
   const [loading, setLoading] = useState(false); // ローディング状態
   const apiUrl = process.env.NEXT_PUBLIC_API_URL; // APIのベースURL
 
@@ -61,6 +63,33 @@ const ShioriPage3 = () => {
     }
   };
 
+  // 経路を取得する関数
+  const fetchRoute = async () => {
+    if (!startAddress || !address) {
+      alert("出発地と目的地を入力してください");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const response = await fetch(
+        `${apiUrl}/api/route?start=${encodeURIComponent(startAddress)}&destination=${encodeURIComponent(address)}`
+      );
+      if (!response.ok) {
+        throw new Error("経路の取得に失敗しました");
+      }
+      const data = await response.json();
+      setRouteData(data);
+    } catch (error) {
+      console.error("エラー:", error);
+      alert("経路情報の取得に失敗しました");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+
   return (
     <div id="page3" className={`flex flex-col items-center justify-between min-h-screen ${shioriColor}`}>
       {/* 上部コンテンツ */}
@@ -68,9 +97,21 @@ const ShioriPage3 = () => {
         <div className="border-4 border-pink-500 rounded-md p-6 bg-white shadow-lg w-full">
           <h1 className="text-3xl font-bold mb-4 text-center">しおりpage3</h1>
 
-          {/* 住所入力 */}
+          {/* 出発地入力 */}
           <div className="mb-6">
-            <h2 className="text-xl font-bold mb-4 text-center">住所入力</h2>
+            <h2 className="text-xl font-bold mb-4 text-center">出発地</h2>
+            <input
+              type="text"
+              value={startAddress}
+              onChange={(e) => setStartAddress(e.target.value)}
+              placeholder="例: 東京都新宿区 (出発地)"
+              className="border-2 border-gray-300 p-2 w-full rounded-md mb-4"
+            />
+          </div>
+
+          {/* 目的地入力 */}
+          <div className="mb-6">
+            <h2 className="text-xl font-bold mb-4 text-center">目的地入力</h2>
             <input
               type="text"
               value={address}
@@ -83,7 +124,7 @@ const ShioriPage3 = () => {
               className="p-2 bg-blue-500 text-white rounded-md shadow-md hover:bg-blue-600"
               disabled={loading}
             >
-              {loading ? "取得中..." : "天気予報を確認する"}
+              {loading ? "取得中..." : "目的地の天気予報と経路を確認する"}
             </button>
           </div>
 
@@ -112,19 +153,20 @@ const ShioriPage3 = () => {
             </div>
           </div>
 
-          {/* 地図経路 */}
-          <div>
-            <h2 className="text-xl font-bold mb-4 text-center">地図経路</h2>
+          {/* 経路情報 */}
+          <div className="mb-6">
+            <h2 className="text-xl font-bold mb-4 text-center">経路情報</h2>
             <div className="border-2 border-gray-300 p-4 rounded-lg bg-gray-50">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3240.774308328819!2d139.69170601524733!3d35.68948738019181!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x60188c0b0a1a8e8d%3A0x60188c0b0a1a8e8d!2z44CSMTMxLTAwNDMg5p2x5Lqs6YO95paw5a6_5Yy65pyo6L6G5qOu44GV44KT44Go44GE44G-44Gn44GZ44Gf44O85YyX5rOJ5aSa5Yy65p2k55u05paw5biC!5e0!3m2!1sen!2sjp!4v1635784553877!5m2!1sen!2sjp"
-                width="100%"
-                height="250"
-                style={{ border: 0 }}
-                allowFullScreen=""
-                loading="lazy"
-                className="rounded-lg shadow-md"
-              ></iframe>
+              {loading ? (
+                <p className="text-sm">経路情報を読み込んでいます...</p>
+              ) : routeData ? (
+                <div>
+                  <h2 className="text-lg font-bold mt-4">経路詳細</h2>
+                  <pre className="text-sm">{JSON.stringify(routeData, null, 2)}</pre>
+                </div>
+              ) : (
+                <p className="text-sm">経路情報を取得できませんでした。</p>
+              )}
             </div>
           </div>
         </div>
