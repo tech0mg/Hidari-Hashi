@@ -29,8 +29,6 @@ const App = () => {
   return (
     <div className="flex flex-col h-screen bg-gray-100">
       {/* ヘッダー */}
-
-
       <header className="bg-[#ECE9E6] shadow-md p-4 flex justify-between items-center">
         <h1 className="text-xl font-bold text-[#9A877A]">Kid's Compass</h1>
         {/* <button

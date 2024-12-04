@@ -5,12 +5,13 @@ import { useRouter } from "next/navigation";
 const UsersPage = () => {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState(null);
+  const apiUrl = process.env.NEXT_PUBLIC_API_URL;
 
   useEffect(() => {
     // Fetch users from the API
     const fetchUsers = async () => {
       try {
-        const response = await fetch('http://127.0.0.1:8080/users'); // Flaskのエンドポイント
+        const response = await fetch(`${apiUrl}/users`); // Flaskのエンドポイント
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
