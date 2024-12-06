@@ -7,6 +7,7 @@ import requests
 import mysql.connector
 from mysql.connector import Error
 from dotenv import load_dotenv
+from geopy.distance import geodesic
 
 # Azure Database for MySQL
 # REST APIでありCRUDを持っている
@@ -189,52 +190,115 @@ def get_weather():
 
 
 # 住所から緯度と経度を取得する
-@app.route('/api/route', methods=['GET'])
-def get_route():
-    start = request.args.get('start')
-    destination = request.args.get('destination')
-
-    if not start or not destination:
-        return jsonify({"error": "出発地と目的地を指定してください"}), 400
-
-    try:
-        # 出発地と目的地の緯度経度を取得
-        start_coords = get_lat_lng(start)
-        destination_coords = get_lat_lng(destination)
-
-        if not start_coords or not destination_coords:
-            return jsonify({"error": "住所から緯度経度を取得できませんでした"}), 400
-
-        # Roads APIで経路を取得
-        response = requests.get(
-            f"https://roads.googleapis.com/v1/nearestRoads",
-            params={
-                "points": f"{start_coords['lat']},{start_coords['lng']}|{destination_coords['lat']},{destination_coords['lng']}",
-                "key": GOOGLE_API_KEY
-            }
-        )
-
-        if response.status_code != 200:
-            return jsonify({"error": "経路情報の取得に失敗しました"}), response.status_code
-
-        return jsonify(response.json()), 200
-    except Exception as e:
-        print(f"Error fetching route: {e}")
-        return jsonify({"error": "経路情報取得中にエラーが発生しました"}), 500
-
-
-# 経路の表示
 def get_lat_lng(address):
+    print(f"Geocoding address: {address}")  # デバッグログ
     response = requests.get(
         "https://maps.googleapis.com/maps/api/geocode/json",
         params={"address": address, "key": GOOGLE_API_KEY}
     )
+    print(f"Geocoding API Response: {response.text}")  # デバッグログ
     if response.status_code == 200:
         data = response.json()
         if "results" in data and len(data["results"]) > 0:
             location = data["results"][0]["geometry"]["location"]
             return {"lat": location["lat"], "lng": location["lng"]}
+        else:
+            print("Geocoding API error: No results found")
+    else:
+        print(f"Geocoding API error: {response.status_code}, {response.text}")
     return None
+
+# 出発地と目的地の緯度・経度を使って中間地点を計算
+def interpolate_path(start_coords, destination_coords):
+    distance = geodesic(
+        (start_coords['lat'], start_coords['lng']),
+        (destination_coords['lat'], destination_coords['lng'])
+    ).kilometers
+    num_points = max(10, int(distance * 5))  # 1kmあたり5ポイントを追加
+    lat_diff = destination_coords['lat'] - start_coords['lat']
+    lng_diff = destination_coords['lng'] - start_coords['lng']
+    return [
+        {
+            "lat": start_coords['lat'] + i * lat_diff / num_points,
+            "lng": start_coords['lng'] + i * lng_diff / num_points
+        }
+        for i in range(num_points + 1)
+    ]
+
+
+# 経路の取得と表示
+@app.route('/api/route', methods=['GET'])
+def get_route():
+    print("get_route called")
+    start = request.args.get('start')
+    destination = request.args.get('destination')
+    print(f"Start: {start}, Destination: {destination}")
+
+    if not start or not destination:
+        return jsonify({"error": "出発地と目的地を指定してください"}), 400
+
+    try:
+        # 住所を緯度・経度に変換
+        start_coords = get_lat_lng(start)
+        destination_coords = get_lat_lng(destination)
+        #print(f"Start Coords: {start_coords}, Destination Coords: {destination_coords}")
+
+        if not start_coords or not destination_coords:
+            print("Error: Failed to get coordinates")
+            return jsonify({"error": "住所から緯度経度を取得できませんでした"}), 400
+        
+        # 中間地点を生成して path に設定
+        intermediate_points = interpolate_path(start_coords, destination_coords)
+        path = "|".join([f"{p['lat']},{p['lng']}" for p in intermediate_points])
+        print(f"Constructed path with intermediate points for API request: {path}")
+
+        # Snap to Roads API リクエストの URL を構築
+        path = f"{start_coords['lat']},{start_coords['lng']}|{destination_coords['lat']},{destination_coords['lng']}"
+        print(f"Constructed path for API request: {path}")  # pathを出力
+
+        snap_to_roads_url = "https://roads.googleapis.com/v1/snapToRoads"
+        response = requests.get(
+            snap_to_roads_url,
+                params = {
+                    "path": path,
+                    "interpolate": "true",
+                    "key": GOOGLE_API_KEY
+            }
+        )
+
+        #print(f"Snap to Roads API Request URL: {response.url}")  # デバッグ用にリクエストURLを出力
+
+        if response.status_code != 200:
+            error_message = f"Snap to Roads API error: {response.status_code}, {response.text}"
+            print(error_message)
+            return jsonify({"error": error_message}), response.status_code
+
+        # Snap to Roadsの結果をパース
+        try:
+            snap_to_roads_data = response.json()
+            print("Snap to Roads API Response:", snap_to_roads_data)  # デバッグログ
+            if "snappedPoints" not in snap_to_roads_data or not snap_to_roads_data["snappedPoints"]:
+                raise ValueError("Snap to Roads API returned no snapped points.")
+        except Exception as e:
+            error_message = f"Failed to parse Snap to Roads response: {str(e)}"
+            print(error_message)
+            return jsonify({"error": error_message}), 500
+
+        # Google MapsのURLを生成
+        google_maps_url = (
+            f"https://www.google.com/maps/dir/?api=1&origin={start_coords['lat']},{start_coords['lng']}"
+            f"&destination={destination_coords['lat']},{destination_coords['lng']}&travelmode=driving"
+        )
+        print(f"Generated Google Maps URL: {google_maps_url}")
+
+        return jsonify({
+            "snapToRoads": snap_to_roads_data,
+            "googleMapsUrl": google_maps_url
+        }), 200
+
+    except Exception as e:
+        print(f"Error fetching route: {e}")
+        return jsonify({"error": "経路情報取得中にエラーが発生しました"}), 500
 
 
 # 写真アップロードのエンドポイントを追加

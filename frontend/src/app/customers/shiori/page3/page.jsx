@@ -15,6 +15,7 @@ const ShioriPage3 = () => {
   const [routeData, setRouteData] = useState(null); // 経路データの状態管理
   const [isLoadingWeather, setIsLoadingWeather] = useState(false);// ローディング状態
   const [isLoadingRoute, setIsLoadingRoute] = useState(false); // ローディング状態
+  const [routeError, setRouteError] = useState(null);// エラー状態の管理
 
   const apiUrl = process.env.NEXT_PUBLIC_API_URL; // APIのベースURL
 
@@ -22,35 +23,57 @@ const ShioriPage3 = () => {
     setIsLoadingWeather(true);
     try {
       const response = await fetch(`${apiUrl}/api/postal-code?address=${encodeURIComponent(address)}`);
-      if (!response.ok) throw new Error("Failed to fetch postal code");
+      if (!response.ok) throw new Error(`Failed to fetch postal code: ${response.statusText}`);
       const { postalCode } = await response.json();
 
       const weatherResponse = await fetch(`${apiUrl}/api/weather?postalCode=${postalCode}&countryCode=JP`);
-      if (!weatherResponse.ok) throw new Error("Failed to fetch weather");
+      if (!weatherResponse.ok) throw new Error(`Failed to fetch weather: ${weatherResponse.statusText}`);
       const weather = await weatherResponse.json();
       setWeatherData(weather);
     } catch (error) {
-      console.error("Error fetching weather:", error);
+      console.error("Error fetching weather:", error.message);
+      alert(`天気データの取得に失敗しました: ${error.message}`);
     } finally {
       setIsLoadingWeather(false);
     }
   };
 
+  const transformPath = (snapToRoadsData) => {
+    return snapToRoadsData.snappedPoints.map((point) => ({
+      lat: point.location.latitude,
+      lng: point.location.longitude,
+    }));
+  };
+
   const fetchRoute = async (start, destination) => {
     setIsLoadingRoute(true);
+    setRouteError(null); // エラー状態をリセット
+
     try {
-      const response = await fetch(
-        `${apiUrl}/api/route?start=${encodeURIComponent(start)}&destination=${encodeURIComponent(destination)}`
-      );
-      if (!response.ok) throw new Error("Failed to fetch route");
+      const encodedStart = encodeURIComponent(start.trim());
+      const encodedDestination = encodeURIComponent(destination.trim());
+      const requestUrl = `${apiUrl}/api/route?start=${encodedStart}&destination=${encodedDestination}`;
+      
+      console.log("Fetching route with URL:", requestUrl); // デバッグ用ログ
+
+      const response = await fetch(requestUrl);
+      if (!response.ok) throw new Error(`Failed to fetch route: ${response.status}`);
       const route = await response.json();
-      setRouteData(route);
-    } catch (error) {
-      console.error("Error fetching route:", error);
-    } finally {
-      setIsLoadingRoute(false);
+
+      // Google Mapsのリンク
+      if (route.snapToRoads) {
+      const path = transformPath(route.snapToRoads);
+      setRouteData(path);
+    } else {
+      setRouteError(new Error("Route data not found in response"));
     }
-  };
+  } catch (error) {
+    console.error("Error fetching route:", error);
+    setRouteError(error);
+  } finally {
+    setIsLoadingRoute(false);
+  }
+};
 
  
 
@@ -64,24 +87,24 @@ const ShioriPage3 = () => {
 
           {/* 出発地入力 */}
           <div className="mb-6">
-            <h2 className="text-xl font-bold mb-4 text-center">出発地</h2>
+            <h2 className="text-xl font-bold mb-4 text-center">出発地を入力</h2>
             <input
               type="text"
               value={startAddress}
               onChange={(e) => setStartAddress(e.target.value)}
-              placeholder="例: 東京都新宿区 (出発地)"
+              placeholder="例: 東京都台東区秋葉原"
               className="border-2 border-gray-300 p-2 w-full rounded-md mb-4"
             />
           </div>
 
           {/* 目的地入力 */}
           <div className="mb-6">
-            <h2 className="text-xl font-bold mb-4 text-center">目的地入力</h2>
+            <h2 className="text-xl font-bold mb-4 text-center">目的地を入力</h2>
             <input
               type="text"
               value={destinationAddress}
               onChange={(e) => setDestinationAddress(e.target.value)}
-              placeholder="例: 東京都新宿区"
+              placeholder="例: 福岡県福岡市博多区中州"
               className="border-2 border-gray-300 p-2 w-full rounded-md mb-4"
             />
             <button
@@ -101,6 +124,11 @@ const ShioriPage3 = () => {
 
           {/* 経路情報表示 */}
           <RouteInfo isLoading={isLoadingRoute} data={routeData} />
+
+          {/* エラーメッセージの表示 */}
+          {routeError && (
+            <p className="text-sm text-red-500 mt-4">エラーが発生しました: {routeError.message || "詳細不明なエラー"}</p>
+          )}
         </div>
       </div>
 
