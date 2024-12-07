@@ -9,14 +9,14 @@ import { useNavigation } from "../components/useNavigation";
 const ShioriPage1 = () => {
   const { navigateTo } = useNavigation();
   const { shioriColor } = useColor();
-  const [isColorModalOpen, setIsColorModalOpen] = useState(false);
 
-  const toggleColorModal = () => {
-    setIsColorModalOpen(!isColorModalOpen);
-  };
 
   return (
-    <div id="page1" className={`flex flex-col items-center justify-between min-h-screen ${shioriColor}`}>
+    <div 
+    id="page1" 
+    className="flex flex-col items-center justify-between min-h-screen"
+    style={{ backgroundColor: shioriColor }}
+    >
       {/* ヘッダー */}
       <header className="bg-[#ECE9E6] shadow-md p-4 flex justify-between items-center w-full">
         <h1 className="text-xl font-bold text-[#9A877A]">Kid's Compass</h1>
@@ -33,18 +33,6 @@ const ShioriPage1 = () => {
         </div>
       </div>
 
-      {/* モーダルの開閉ボタン */}
-      <div className="mt-4">
-        <button
-          className="p-2 bg-blue-200 rounded-full shadow-md"
-          onClick={toggleColorModal}
-        >
-          色を選ぶ
-        </button>
-      </div>
-
-      {/* モーダル */}
-      {isColorModalOpen && <ColorModal onClose={toggleColorModal} />}
       
         {/* 次へボタン */}
         <div className="mt-4">

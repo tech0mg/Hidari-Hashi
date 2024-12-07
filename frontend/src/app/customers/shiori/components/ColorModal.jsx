@@ -4,7 +4,18 @@ import { useColor } from "../../../context/ColorContext";
 
 const ColorModal = ({ onClose }) => {
   const { setColor } = useColor();
-  const colors = ["bg-red-200", "bg-blue-200", "bg-green-200", "bg-yellow-200"];
+  const colors = [
+    { color: "#F28B82", label: "赤" },
+    { color: "#F06292", label: "ピンク" },
+    { color: "#CE93D8", label: "紫" },
+    { color: "#64B5F6", label: "青" },
+    { color: "#81C784", label: "緑" },
+    { color: "#E0E0E0", label: "グレー" },
+    { color: "#4DD0E1", label: "シアン" },
+    { color: "#FFD54F", label: "オレンジ" },
+    { color: "#FFF176", label: "黄色" },
+    { color: "#A1887F", label: "ブラウン" },
+  ];
 
   const handleColorChange = (color) => {
     setColor(color);
@@ -19,14 +30,17 @@ const ColorModal = ({ onClose }) => {
           {colors.map((colorOption, index) => (
             <button
               key={index}
-              className={`p-4 rounded-full ${colorOption}`}
-              onClick={() => handleColorChange(colorOption)}
+              className="w-12 h-12 rounded-full"
+              style={{ backgroundColor: colorOption.color }}
+              onClick={() => handleColorChange(colorOption.color)}
             >
-              {colorOption.replace("bg-", "").replace("-200", "")}
             </button>
           ))}
         </div>
-        <button className="mt-4 p-2 bg-gray-500 text-white rounded-md" onClick={onClose}>
+        <button 
+        className="mt-4 p-2 bg-gray-500 text-white rounded-md" 
+        onClick={onClose}
+        >
           閉じる
         </button>
       </div>
