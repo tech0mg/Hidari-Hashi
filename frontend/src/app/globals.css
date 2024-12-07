@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* メインコンテンツ用のグラデーション背景 */
+/*メインコンテンツ用のグラデーション背景*/
 .bg-gradient-main {
   background: linear-gradient(to bottom, #ECE9E6, #FFFFFF);
 }
