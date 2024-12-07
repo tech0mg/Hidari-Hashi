@@ -1,9 +1,12 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import ShioriFooterButtons from "../components/ShioriFooterButtons";//下部の共通ボタン
+import ShioriFooterButtons from "../components/ShioriFooterButtons"; // 下部の共通ボタン
 import { useColor } from "../../../context/ColorContext"; // ColorContextのインポート
 
+// アイコンのインポート修正
+import RightArrowIcon from "../../../components/icon/icon_arrow_right";
+import LeftArrowIcon from "../../../components/icon/icon_arrow_left";
 
 const ShioriPage = () => {
   const router = useRouter();
@@ -30,6 +33,8 @@ const ShioriPage = () => {
   const handleNavigation = (destination) => {
     if (destination === "next") {
       router.push("/customers/shiori/page2");
+    } else if (destination === "prev") {
+      router.push("/customers/shiori/page1");
     } else if (destination === "list-detail") {
       router.push("/customers/list/list-detail");
     } else if (destination === "list") {
@@ -41,8 +46,7 @@ const ShioriPage = () => {
     setSelectedIllustration(event.target.value);
   };
 
-
-   // 色変更モーダルの開閉
+  // 色変更モーダルの開閉
   const toggleColorModal = () => {
     setIsColorModalOpen(!isColorModalOpen);
   };
@@ -51,7 +55,7 @@ const ShioriPage = () => {
   const changeColor = (selectedColor) => {
     setColor(selectedColor); // Contextに色を設定
     setIsColorModalOpen(false); // モーダルを閉じる
-  }; 
+  };
 
   return (
     <div id="page1" className={`flex flex-col items-center justify-between min-h-screen ${shioriColor}`}>
@@ -60,12 +64,15 @@ const ShioriPage = () => {
         <h1 className="text-xl font-bold text-[#9A877A]">Kid's Compass</h1>
       </header>
 
-      {/* 上部コンテンツ */}
-      <div className="flex flex-col items-center mt-8">
-        <div className="border-4 border-pink-500 rounded-md p-6 bg-white shadow-lg">
-          <h1 className="text-3xl font-bold mb-4 text-center">しおりpage1</h1>
-          <p className="text-lg text-center mb-2">Produced by</p>
-          <p className="text-xl text-center font-semibold">りな</p>
+      {/* 上部コンテンツラッパー */}
+      <div className="relative flex items-center justify-center mt-8 w-full max-w-3xl mx-auto">
+
+
+        {/* 上部コンテンツ */}
+        <div className="border-8 border-[#da7997] rounded-sm p-6 bg-white shadow-lg w-full max-w-xl">
+          <h1 className="text-3xl font-bold mb-4 text-center text-gray-600">しおり</h1>
+          <p className="text-lg text-center mb-2 text-gray-600">Produced by</p>
+          <p className="text-xl text-center font-semibold text-gray-600">りな</p>
 
           {/* イラスト選択プルダウン */}
           <div className="mt-4">
@@ -100,6 +107,14 @@ const ShioriPage = () => {
             </div>
           )}
         </div>
+
+        {/* 右矢印ボタン */}
+        <button
+          className="absolute right-0 top-1/2 transform -translate-y-1/2 p-2"
+          onClick={() => handleNavigation("next")}
+        >
+          <RightArrowIcon size={24} />
+        </button>
       </div>
 
       {/* モーダルの開閉ボタン */}
@@ -116,39 +131,38 @@ const ShioriPage = () => {
       {isColorModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-lg">
-            <h2 className="text-xl font-bold mb-4 text-center">色を選択</h2>
+            <h2 className="text-xl font-bold mb-5 text-center">色をえらぶ</h2>
             <div className="grid grid-cols-3 gap-4">
-              {["bg-red-200", "bg-blue-200", "bg-green-200", "bg-yellow-200"].map(
-                (colorOption, index) => (
-                  <button
-                    key={index}
-                    className={`p-4 rounded-full ${colorOption}`}
-                    onClick={() => changeColor(colorOption)}
-                  >
-                    {colorOption.replace("bg-", "").replace("-200", "")}
-                  </button>
-                )
-              )}
+              {[
+                "#da7997",
+                "#E37E88",
+                "#C2AAC5",
+                "#5F72D1",
+                "#389D63",
+                "#63C0C3",
+                "#EFB97B",
+                "#E4E872",
+                "#9A877A",
+              ].map((colorOption, index) => (
+                <button
+                  key={index}
+                  className={`p-4 rounded-full`}
+                  style={{ backgroundColor: colorOption }}
+                  onClick={() => changeColor(colorOption)}
+                >
+                  {/* 色の名前は表示しません */}
+                </button>
+              ))}
             </div>
             <button
-              className="mt-4 p-2 bg-gray-500 text-white rounded-md"
+              className="mt-7 p-2 bg-gray-400 text-white rounded-md"
               onClick={toggleColorModal}
             >
-              閉じる
+              とじる
             </button>
           </div>
         </div>
       )}
-
-        {/* 次へボタン */}
-        <div className="mt-4">
-        <button
-          className="p-2 bg-gray-200 rounded-full shadow-md"
-          onClick={() => handleNavigation("next")}
-        >
-          →
-        </button>
-      </div>
 
       {/* 下部ボタン */}
       <ShioriFooterButtons handleNavigation={handleNavigation} />
