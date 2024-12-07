@@ -25,6 +25,7 @@ const ShioriFooterButtons = ({ handleNavigation }) => {
           <span className="text-sm mt-2">いろをえらぶ</span>
         </button>
 
+        {/* イラストを選ぶ */}
         <button
           onClick={() => alert("イラストをえらぶボタンが押されました")}
           className="flex flex-col items-center"
@@ -35,21 +36,23 @@ const ShioriFooterButtons = ({ handleNavigation }) => {
           <span className="text-sm mt-2">イラストをえらぶ</span>
         </button>
         
+        {/* 保存するボタン */}
         <SaveToPDF
           pages={pagesToSave} // PDF出力対象のページを指定
           fileName="ShioriContent.pdf" // 保存するPDFの名前
+          customButton={(
+            <button
+              className="flex flex-col items-center"
+            >
+              <div className="w-12 h-12 rounded-full flex items-center justify-center">
+                <SaveIcon size={24} />
+              </div>
+              <span className="text-sm mt-2">ほぞんする</span>
+            </button>
+          )}
         />
-        
-        <button
-          onClick={() => alert("ほぞんするボタンが押されました")}
-          className="flex flex-col items-center"
-        >
-          <div className="w-12 h-12 rounded-full flex items-center justify-center">
-            <SaveIcon size={24}/>
-          </div>
-          <span className="text-sm mt-2">ほぞんする</span>
-        </button>
 
+        {/* やめる */}
         <button
           onClick={() => handleNavigation("list-detail")}
           className="flex flex-col items-center"
@@ -60,6 +63,7 @@ const ShioriFooterButtons = ({ handleNavigation }) => {
           <span className="text-sm mt-2">やめる</span>
         </button>
 
+        {/* リストに戻る */}
         <button
           onClick={() => handleNavigation("list")}
           className="flex flex-col items-center"
@@ -70,6 +74,7 @@ const ShioriFooterButtons = ({ handleNavigation }) => {
           <span className="text-sm mt-2">リストにもどる</span>
         </button>
 
+        {/* 記録を見る */}
         <button
           onClick={() => alert("きろくをみるボタンが押されました")}
           className="flex flex-col items-center"

@@ -3,6 +3,8 @@
 import React from "react";
 import jsPDF from "jspdf";
 import html2canvas from "html2canvas";
+import SaveIcon from "../../../components/icon/icon_save";
+
 
 const SaveToPDF = ({ pages, fileName = "document.pdf" }) => {
   const handleSaveToPDF = async () => {
@@ -36,10 +38,13 @@ const SaveToPDF = ({ pages, fileName = "document.pdf" }) => {
 
   return (
     <button
+      className="flex flex-col items-center"
       onClick={handleSaveToPDF}
-      className="p-2 bg-pink-500 text-white rounded-md shadow-md hover:bg-pink-600"
     >
-      ほぞんする
+      <div className="w-12 h-12 rounded-full flex items-center justify-center">
+        <SaveIcon size={24} />
+      </div>
+      <span className="text-sm mt-2">ほぞんする</span>
     </button>
   );
 };
