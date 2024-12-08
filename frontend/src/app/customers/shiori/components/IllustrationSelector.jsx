@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 
-const IllustrationSelector = () => {
+const IllustrationSelector = ({ onIllustrationChange }) => {
   const [illustrations, setIllustrations] = useState([]);
   const [selectedIllustration, setSelectedIllustration] = useState("");
   const apiUrl = process.env.NEXT_PUBLIC_API_URL;
@@ -20,15 +20,26 @@ const IllustrationSelector = () => {
     fetchIllustrations();
   }, [apiUrl]);
 
+  const handleSelectionChange = (e) => {
+    const newIllustration = e.target.value;
+    setSelectedIllustration(newIllustration);
+    if (onIllustrationChange) {
+      onIllustrationChange(`${apiUrl}${newIllustration}`); // プロパティを利用して通知
+    }
+  };
+
   return (
     <div>
-      <label htmlFor="illustration-select" className="block mb-2 text-sm font-medium text-gray-700">
+      <label 
+        htmlFor="illustration-select" 
+        className="block mb-2 text-sm font-medium text-gray-700"
+      >
         イラストを選択してください
       </label>
       <select
         id="illustration-select"
         value={selectedIllustration}
-        onChange={(e) => setSelectedIllustration(e.target.value)}
+        onChange={handleSelectionChange}
         className="block w-full p-2 border border-gray-300 rounded-lg shadow-sm"
       >
         <option value="">-- イラストを選択 --</option>

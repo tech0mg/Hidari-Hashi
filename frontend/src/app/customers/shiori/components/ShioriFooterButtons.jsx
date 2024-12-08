@@ -8,10 +8,13 @@ import CloseIcon from "../../../components/icon/icon_close";
 import StarIcon from "../../../components/icon/icon_star"; 
 import KirokuIcon from "../../../components/icon/icon_kiroku"; 
 import ColorModal from "../components/ColorModal";
+import IllustrationSelector from "./IllustrationSelector";
 
-const ShioriFooterButtons = ({ handleNavigation }) => {
+const ShioriFooterButtons = ({ handleNavigation, onIllustrationChange }) => {
   const [isColorModalOpen, setIsColorModalOpen] = useState(false);
   const pagesToSave = ["page1", "page2", "page3", "page4", "page5"]; // 保存対象のページID
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const toggleModal = () => setIsModalOpen(!isModalOpen);
 
   const toggleColorModal = () => {
     setIsColorModalOpen(!isColorModalOpen);
@@ -40,13 +43,16 @@ const ShioriFooterButtons = ({ handleNavigation }) => {
 
           {/* イラストを選ぶ */}
           <button
-            onClick={() => alert("イラストをえらぶボタンが押されました")}
+            onClick={toggleModal}
             className="flex flex-col items-center"
+            aria-label="イラストを選ぶ"
           >
             <div className="w-12 h-12  rounded-full flex items-center justify-center">
               <CrownIcon size={24} />
             </div>
-            <span className="text-sm mt-2">イラストをえらぶ</span>
+            <span className="text-sm mt-2 text-gray-700 hover:text-gray-900">
+              イラストをえらぶ
+            </span>
           </button>
           
           {/* 保存するボタン */}
@@ -102,6 +108,22 @@ const ShioriFooterButtons = ({ handleNavigation }) => {
 
       {/* モーダル */}
       {isColorModalOpen && <ColorModal onClose={toggleColorModal} />}
+
+      {/* イラストモーダル */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h2 className="text-xl font-bold mb-4 text-center">イラストを選択</h2>
+            <IllustrationSelector onIllustrationChange={onIllustrationChange} />
+            <button
+              className="mt-4 p-2 bg-gray-500 text-white rounded-md"
+              onClick={toggleModal}
+            >
+              イラストをえらぶ
+            </button>
+          </div>
+        </div>
+      )}
     </>
   );
 };

@@ -1,15 +1,26 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ShioriFooterButtons from "../components/ShioriFooterButtons";//下部の共通ボタン
 import { useColor } from "../../../context/ColorContext"; // ColorContextのインポート
-import ColorModal from "../components/ColorModal";
 import IllustrationSelector from "../components/IllustrationSelector";
 import { useNavigation } from "../components/useNavigation";
 
 const ShioriPage1 = () => {
   const { navigateTo } = useNavigation();
   const { shioriColor } = useColor();
+  const [selectedIllustration, setSelectedIllustration] = useState("");
 
+  useEffect(() => {
+    const savedIllustration = localStorage.getItem("selectedIllustration");
+    if (savedIllustration) {
+      setSelectedIllustration(savedIllustration);
+    }
+  }, []);
+
+  const handleIllustrationChange = (newIllustration) => {
+    setSelectedIllustration(newIllustration);
+    localStorage.setItem("selectedIllustration", newIllustration);
+  };
 
   return (
     <div 
@@ -28,8 +39,14 @@ const ShioriPage1 = () => {
           <h1 className="text-3xl font-bold mb-4 text-center">しおりpage1</h1>
           <p className="text-lg text-center mb-2">Produced by</p>
           <p className="text-xl text-center font-semibold">りな</p>
-          {/* イラスト選択プルダウン */}
-          <IllustrationSelector />
+          {/*  選択したイラストを表示 */}
+          {selectedIllustration && (
+            <img
+              src={selectedIllustration}
+              alt="Selected Illustration"
+              className="mt-4 w-32 h-32 object-contain mx-auto border border-gray-300 rounded-lg"
+            />
+          )}
         </div>
       </div>
 
@@ -45,7 +62,10 @@ const ShioriPage1 = () => {
       </div>
 
       {/* 下部ボタン */}
-      <ShioriFooterButtons handleNavigation={navigateTo} />
+      <ShioriFooterButtons 
+        handleNavigation={navigateTo} 
+        onIllustrationChange={handleIllustrationChange}
+      />
     </div>
   );
 };
